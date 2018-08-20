@@ -1,0 +1,15 @@
+{
+  "name": "posist",
+  "version": "1.0.0",
+  "description": "Posist Project Interview",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Akhilesh (akhileshrao19@gmail.com)",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^3.0.0",
+    "crypto-js": "^3.1.9-1"
+  }
+}
