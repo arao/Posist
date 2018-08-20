@@ -65,14 +65,14 @@ class Node{
         this.ChildNodeId = new Set;
 
         // address of parent of child
-        this.ReferenceChildNodeId = null
+        this.ReferenceChildNodeId = new Set
     }
 }
 
 class Tree{
     constructor(level = 0){
         this.authenticated = false;
-        this.password = hash(defaultData.password)
+        this.password = hashPassword(defaultData.password)
         this.algoKey = defaultData.ownerName+"::::"+this.password;
         this.inc = 0;
         this.level = level;
@@ -88,7 +88,8 @@ class Tree{
             ++this.inc);
         // console.log(this.root)
     }
-    addChild( value, ReferenceNodeId=null){
+    addChild(ref, value, ReferenceNodeId=null){
+        this = ref;
         let data = this.root.Data.getData(this.password)
         let child = new Node(data.ownerName,
             data.address,
@@ -101,12 +102,10 @@ class Tree{
             ++this.inc,
             this)
         this.root.ChildNodeId.add(child.NodeId);
-        if(this.root.ReferenceChildNodeId === null){
-            this.root.ReferenceChildNodeId = child;
-        }
+        this.root.ReferenceChildNodeId.add(child);
     }
     authenticate(ownerName, password){
-        if(hash(password) == this.password){
+        if(comparePassword(password, this.password)){
             let algo = ownerName+"::::"+this.password
             if(algo === this.algoKey){
                 console.log("User Authenticated")
@@ -115,6 +114,27 @@ class Tree{
             }
         }
         console.log("Authentication failed");
+    }
+    dive(node, target, value){
+        if(node.NodeId == target){
+            this.addChild(node, value);
+        }else{
+            if(node.ChildNodeId.has(target)){
+                let iterator = node.ReferenceChildNodeId.values();
+                while(iterator.value && iterator.value.NodeId !== target){
+                    iterator = iterator.next();
+                }
+                let obj = iterator.value();
+                this.addChild(obj, value);
+                return true;
+            }else{
+                let iterator = node.ReferenceChildNodeId.values();
+                while(iterator.value && ! this.dive(iterator.value, target, value){
+                    iterator = iterator.next();
+                }
+                return iterator === undefined ? false : true;
+            }
+        }
     }
 }
 
@@ -130,5 +150,3 @@ class Main{
         this.node[name] = value;
     }
 }
-k = new Main()
-k.node.authenticate("Delta","12345678790");
